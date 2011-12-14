@@ -8,6 +8,8 @@ import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: davek
@@ -34,15 +36,29 @@ public class SQSMessageConsumer implements MessageConsumer {
     
     public String getMessage() {
         logger.debug("Getting message from {}", toString());
-        ReceiveMessageResult messageResult = amazonSQSClient.receiveMessage(receiveMessageRequest);
-        Message message = messageResult.getMessages().get(0);
-        String messageBody = message.getBody();
-        DeleteMessageRequest deleteMessageRequest = new DeleteMessageRequest(uri, message.getReceiptHandle());
-        logger.debug("Received message {} from {}", messageBody, toString());
+        int nummsgs = 0;
+        String messageBody = "NO MESSAGE RECEIVED";
+
+        while (nummsgs == 0) {
+            ReceiveMessageResult messageResult = amazonSQSClient.receiveMessage(receiveMessageRequest);
+            List<Message> messages = messageResult.getMessages();
+            nummsgs = messages.size();
+            for (Message message: messages) {
+                messageBody = message.getBody();
+                DeleteMessageRequest deleteMessageRequest = new DeleteMessageRequest(uri, message.getReceiptHandle());
+                amazonSQSClient.deleteMessage(deleteMessageRequest);
+                logger.debug("Received message {} from {}", messageBody, toString());
+            }
+        }
+
         return messageBody;
     }
 
     public String toString() {
         return "SQS uri: " + uri;
+    }
+
+    public void close() {
+
     }
 }
