@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,9 +16,9 @@ import java.security.NoSuchAlgorithmException;
  * To change this template use File | Settings | File Templates.
  */
 public class RabbitMQMessageConsumer implements MessageConsumer {
-    private String uri;
-    private String queueName;
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final String uri;
+    private final String queueName;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Channel channel;
     private Connection connection;
@@ -56,16 +57,16 @@ public class RabbitMQMessageConsumer implements MessageConsumer {
 
         String message = "NO MESSAGE RECEIVED";
         boolean autoAck = false;
-        GetResponse response = null;
+        GetResponse response;
         try {
             response = channel.basicGet(queueName, autoAck);
 
             if (response == null) {
                 // No message retrieved.
             } else {
-                AMQP.BasicProperties props = response.getProps();
+//                AMQP.BasicProperties props = response.getProps();
                 byte[] body = response.getBody();
-                message = body.toString();
+                message = Arrays.toString(body);
                 long deliveryTag = response.getEnvelope().getDeliveryTag();
                 channel.basicAck(deliveryTag, false);
             } 

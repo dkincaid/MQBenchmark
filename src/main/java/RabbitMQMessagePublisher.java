@@ -17,12 +17,12 @@ import java.security.NoSuchAlgorithmException;
  * To change this template use File | Settings | File Templates.
  */
 public class RabbitMQMessagePublisher implements MessagePublisher {
-    private String uri;
-    private String queueName;
-    private String exchangeName = "vet2pet";
-    private String routingKey = "v2pRouting";
+    private final String uri;
+    private final String queueName;
+    private final String exchangeName = "vet2pet";
+    private final String routingKey = "v2pRouting";
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Connection connection;
     private Channel channel;

@@ -5,12 +5,12 @@
  * Time: 12:16 PM
  */
 public class MQBenchmarkRunner {
-    public static final String QUEUENAME = "vet2pet-test";
-    public static final String RABBITHOST = "localhost";
-    public static final String SQSURI = "https://queue.amazonaws.com/028042250788/v2p_data_testqueue";
+    private static final String QUEUENAME = "vet2pet-test";
+    private static final String RABBITHOST = "localhost";
+    private static final String SQSURI = "https://queue.amazonaws.com/028042250788/v2p_data_testqueue";
 
-    static int numberOfMessages = 10;
-    static String systemToCheck = "both";
+    private static final int numberOfMessages = 10;
+    private static String systemToCheck = "both";
     
     public static void main(String[] argv) {
         if (argv.length == 2) {

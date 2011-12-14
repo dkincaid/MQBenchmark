@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
  * To change this template use File | Settings | File Templates.
  */
 public class PublisherRunner implements Runnable {
-    private MessagePublisher publisher;
-    private int numberOfMessages;
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final MessagePublisher publisher;
+    private final int numberOfMessages;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public PublisherRunner(MessagePublisher publisher, int numberOfMessages) {
         this.publisher = publisher;

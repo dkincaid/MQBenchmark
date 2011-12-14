@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
  * To change this template use File | Settings | File Templates.
  */
 public class ConsumerRunner implements Runnable {
-    private MessageConsumer consumer;
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private int numberOfMessages;
+    private final MessageConsumer consumer;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final int numberOfMessages;
 
     public ConsumerRunner(MessageConsumer consumer, int numberOfMessages) {
         this.consumer = consumer;

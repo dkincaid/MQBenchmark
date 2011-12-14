@@ -8,5 +8,6 @@
 public interface MessageConsumer {
     public String getMessage();
     public String toString();
+    @SuppressWarnings("UnusedDeclaration")
     public void close();
 }

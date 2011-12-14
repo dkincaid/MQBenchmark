@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
  * To change this template use File | Settings | File Templates.
  */
 public class SQSMessagePublisher implements MessagePublisher {
-    private String uri;
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final String uri;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private static final String AWS_ACCESS_KEY = "AKIAIFLSAH6FOUXXYR7Q";
     private static final String AWS_SECRET_KEY = "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";
 
-    private AWSCredentials awsCredentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
-    private AmazonSQSClient amazonSQSClient = new AmazonSQSClient(awsCredentials);
+    private final AWSCredentials awsCredentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
+    private final AmazonSQSClient amazonSQSClient = new AmazonSQSClient(awsCredentials);
 
     public SQSMessagePublisher(String uri) {
         this.uri = uri;
