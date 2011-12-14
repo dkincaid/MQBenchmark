@@ -8,7 +8,6 @@
     <artifactId>MQBenchmark</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -33,10 +32,25 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.4</version>
         </dependency>
-
     </dependencies>
 
-
-
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>MQBenchmarkRunner</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
+
