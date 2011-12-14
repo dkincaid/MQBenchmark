@@ -1,6 +1,4 @@
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,39 +16,78 @@ import java.security.NoSuchAlgorithmException;
  */
 public class RabbitMQMessageConsumer implements MessageConsumer {
     private String uri;
-    private String queuename;
+    private String queueName;
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private Connection connection;
     private Channel channel;
+    private Connection connection;
 
-    public RabbitMQMessageConsumer(String uri, String queuename) {
+    public RabbitMQMessageConsumer(String uri, String queueName) {
         this.uri = uri;
-        this.queuename = queuename;
+        this.queueName = queueName;
 
         try {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setUri(uri);
             connection = factory.newConnection();
             channel = connection.createChannel();
+            String exchangeName = "vet2pet";
+            channel.exchangeDeclare(exchangeName, "direct", true);
+            channel.queueDeclare(queueName, true, false, false, null);
+            String routingKey = "v2pRouting";
+            channel.queueBind(queueName, exchangeName, routingKey);
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            logger.error(e.getMessage());
+            e.printStackTrace();
         } catch (URISyntaxException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            logger.error(e.getMessage());
+            e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            logger.error(e.getMessage());
+            e.printStackTrace();
         } catch (KeyManagementException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            logger.error(e.getMessage());
+            e.printStackTrace();
         }
     }
 
     public String getMessage() {
         logger.debug("Getting messsage from {}", toString());
-        // TODO implement RabbitMQ getMessage
-        return null;
-    }
+
+        String message = "NO MESSAGE RECEIVED";
+        boolean autoAck = false;
+        GetResponse response = null;
+        try {
+            response = channel.basicGet(queueName, autoAck);
+
+            if (response == null) {
+                // No message retrieved.
+            } else {
+                AMQP.BasicProperties props = response.getProps();
+                byte[] body = response.getBody();
+                message = body.toString();
+                long deliveryTag = response.getEnvelope().getDeliveryTag();
+                channel.basicAck(deliveryTag, false);
+            } 
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+    return message;
+}
 
     public String toString() {
-        return "RabbitMQ host: " + uri + " queue: " + queuename;
+        return "RabbitMQ host: " + uri + " queue: " + queueName;
+    }
+
+    public void close() {
+        try {
+            channel.close();
+            connection.close();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

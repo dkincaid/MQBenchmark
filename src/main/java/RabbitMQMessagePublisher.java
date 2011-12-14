@@ -18,21 +18,28 @@ import java.security.NoSuchAlgorithmException;
  */
 public class RabbitMQMessagePublisher implements MessagePublisher {
     private String uri;
-    private String queuename;
+    private String queueName;
+    private String exchangeName = "vet2pet";
+    private String routingKey = "v2pRouting";
+
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private Connection connection;
     private Channel channel;
 
-    public RabbitMQMessagePublisher(String uri, String queuename) {
+    public RabbitMQMessagePublisher(String uri, String queueName) {
         this.uri = uri;
-        this.queuename = queuename;
+        this.queueName = queueName;
 
         try {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setUri(uri);
             connection = factory.newConnection();
             channel = connection.createChannel();
+            channel.exchangeDeclare(exchangeName, "direct", true);
+            channel.queueDeclare(queueName, true, false, false, null);
+            channel.queueBind(queueName, exchangeName, routingKey);
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
@@ -46,17 +53,25 @@ public class RabbitMQMessagePublisher implements MessagePublisher {
 
     public void putMessage(String message) {
         logger.debug("Sending message '{}' to {}", message, toString());
-       // TODO implement RabbitMQ putMessage
+        byte[] messageBodyBytes = message.getBytes();
+        try {
+            channel.basicPublish(exchangeName, routingKey, null, messageBodyBytes);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
      public String toString() {
-        return "RabbitMQ host: " + uri + " queue: " + queuename;
+        return "RabbitMQ host: " + uri + " queue: " + queueName;
     }
     
     public void close() {
         try {
+            channel.close();
             connection.close();
         } catch (IOException e) {
+            logger.error(e.getMessage());
             e.printStackTrace();
         }
     }
