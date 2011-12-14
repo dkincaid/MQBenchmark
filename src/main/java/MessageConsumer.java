@@ -8,4 +8,5 @@
 public interface MessageConsumer {
     public String getMessage();
     public String toString();
+    public void close();
 }
