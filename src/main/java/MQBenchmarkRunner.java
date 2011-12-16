@@ -5,11 +5,11 @@
  * Time: 12:16 PM
  */
 public class MQBenchmarkRunner {
-    private static final String QUEUENAME = "vet2pet-test";
-    private static final String RABBITHOST = "localhost";
-    private static final String SQSURI = "https://queue.amazonaws.com/028042250788/v2p_data_testqueue";
+    private static final String QUEUENAME = "data_testqueue";
+    private static final String RABBITURI = "amqp://user:password@host";
+    private static final String SQSURI = "https://queue.amazonaws.com/xxxxxxxxx/queuename";
 
-    private static final int numberOfMessages = 10;
+    private static int numberOfMessages = 10;
     private static String systemToCheck = "both";
     
     public static void main(String[] argv) {
@@ -22,12 +22,14 @@ public class MQBenchmarkRunner {
                 systemToCheck = "both";
             else
                 printUsage();
+
+            numberOfMessages = Integer.parseInt(argv[1]);
         }
        
 
         if (systemToCheck.equals("rabbitmq") || systemToCheck.equals("both")) {
             startRabbitMQPublisher(numberOfMessages);
-            startRabbitMQConsumer(numberOfMessages);
+            //startRabbitMQConsumer(numberOfMessages);
         }
 
         if (systemToCheck.equals("sqs") || systemToCheck.equals("both")) {
@@ -41,7 +43,7 @@ public class MQBenchmarkRunner {
     }
 
     private static void startRabbitMQPublisher(int numberOfMessages) {
-        createAndStartPublisherThread(new RabbitMQMessagePublisher(RABBITHOST, QUEUENAME), numberOfMessages);
+        createAndStartPublisherThread(new RabbitMQMessagePublisher(RABBITURI, QUEUENAME), numberOfMessages);
     }
 
     private static void createAndStartPublisherThread(MessagePublisher messagePublisher, int numberOfMessages) {
@@ -55,7 +57,7 @@ public class MQBenchmarkRunner {
     }
 
     private static void startRabbitMQConsumer(int numberOfMessages) {
-        createAndStartConsumerThread(new RabbitMQMessageConsumer(RABBITHOST, QUEUENAME), numberOfMessages);
+        createAndStartConsumerThread(new RabbitMQMessageConsumer(RABBITURI, QUEUENAME), numberOfMessages);
     }
     private static void createAndStartConsumerThread(MessageConsumer messageConsumer, int numberOfMessages) {
         ConsumerRunner consumerRunner = new ConsumerRunner(messageConsumer, numberOfMessages);

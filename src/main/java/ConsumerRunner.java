@@ -19,7 +19,7 @@ public class ConsumerRunner implements Runnable {
     }
 
     public void run() {
-        logger.debug("Getting messages from {}", consumer);
+        logger.debug("Getting {} messages from {}", numberOfMessages, consumer);
         long startTime;
         long stopTime;
         
@@ -29,5 +29,7 @@ public class ConsumerRunner implements Runnable {
             stopTime = System.nanoTime();
             logger.info("Message {} retrieved in {} ns", message, stopTime-startTime);
         }
+        
+        consumer.close();
     }
 }

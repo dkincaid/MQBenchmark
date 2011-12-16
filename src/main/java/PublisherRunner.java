@@ -1,6 +1,8 @@
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.*;
+
 /**
  * Created by IntelliJ IDEA.
  * User: davek
@@ -25,9 +27,9 @@ public class PublisherRunner implements Runnable {
 
         for (int i=1; i <= numberOfMessages; i++) {
             startTime = System.nanoTime();
-            publisher.putMessage("test message " + String.valueOf(i));
+            publisher.putMessage("{ \"clientid\":\"" + valueOf(i) + "\"} ");
             stopTime = System.nanoTime();
-            logger.info("Message {} queued in {} ns", String.valueOf(i), stopTime-startTime);
+            logger.info("Message {} queued in {} ns", valueOf(i), stopTime-startTime);
         }
 
         publisher.close();

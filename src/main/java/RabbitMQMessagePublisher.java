@@ -14,13 +14,12 @@ import java.security.NoSuchAlgorithmException;
  * User: davek
  * Date: 12/13/11
  * Time: 12:57 PM
- * To change this template use File | Settings | File Templates.
  */
 public class RabbitMQMessagePublisher implements MessagePublisher {
     private final String uri;
     private final String queueName;
-    private final String exchangeName = "vet2pet";
-    private final String routingKey = "v2pRouting";
+    private final String exchangeName = "";
+    private final String routingKey = "data_testqueue";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -36,10 +35,6 @@ public class RabbitMQMessagePublisher implements MessagePublisher {
             factory.setUri(uri);
             connection = factory.newConnection();
             channel = connection.createChannel();
-            channel.exchangeDeclare(exchangeName, "direct", true);
-            channel.queueDeclare(queueName, true, false, false, null);
-            channel.queueBind(queueName, exchangeName, routingKey);
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
@@ -68,6 +63,7 @@ public class RabbitMQMessagePublisher implements MessagePublisher {
     
     public void close() {
         try {
+            logger.debug("Closing connection to {} {}", uri, queueName);
             channel.close();
             connection.close();
         } catch (IOException e) {

@@ -1,4 +1,7 @@
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.GetResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -6,14 +9,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 /**
  * Created by IntelliJ IDEA.
  * User: davek
  * Date: 12/13/11
  * Time: 12:57 PM
- * To change this template use File | Settings | File Templates.
  */
 public class RabbitMQMessageConsumer implements MessageConsumer {
     private final String uri;
@@ -32,11 +33,6 @@ public class RabbitMQMessageConsumer implements MessageConsumer {
             factory.setUri(uri);
             connection = factory.newConnection();
             channel = connection.createChannel();
-            String exchangeName = "vet2pet";
-            channel.exchangeDeclare(exchangeName, "direct", true);
-            channel.queueDeclare(queueName, true, false, false, null);
-            String routingKey = "v2pRouting";
-            channel.queueBind(queueName, exchangeName, routingKey);
         } catch (IOException e) {
             logger.error(e.getMessage());
             e.printStackTrace();
@@ -57,26 +53,28 @@ public class RabbitMQMessageConsumer implements MessageConsumer {
 
         String message = "NO MESSAGE RECEIVED";
         boolean autoAck = false;
-        GetResponse response;
-        try {
-            response = channel.basicGet(queueName, autoAck);
+        GetResponse response = null;
 
-            if (response == null) {
-                // No message retrieved.
-            } else {
-//                AMQP.BasicProperties props = response.getProps();
-                byte[] body = response.getBody();
-                message = Arrays.toString(body);
-                long deliveryTag = response.getEnvelope().getDeliveryTag();
-                channel.basicAck(deliveryTag, false);
-            } 
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-            e.printStackTrace();
+        while (response == null) {
+            try {
+                response = channel.basicGet(queueName, autoAck);
+
+                if (response == null) {
+                    message = "NO MESSAGE RECEIVED";
+                } else {
+                    byte[] body = response.getBody();
+                    message = new String(body);
+                    long deliveryTag = response.getEnvelope().getDeliveryTag();
+                    channel.basicAck(deliveryTag, false);
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+                e.printStackTrace();
+            }
         }
 
-    return message;
-}
+        return message;
+    }
 
     public String toString() {
         return "RabbitMQ host: " + uri + " queue: " + queueName;

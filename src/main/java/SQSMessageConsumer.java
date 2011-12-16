@@ -15,13 +15,12 @@ import java.util.List;
  * User: davek
  * Date: 12/13/11
  * Time: 1:03 PM
- * To change this template use File | Settings | File Templates.
  */
 public class SQSMessageConsumer implements MessageConsumer {
     private final String uri;
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private static final String AWS_ACCESS_KEY = "AKIAIFLSAH6FOUXXYR7Q";
-    private static final String AWS_SECRET_KEY = "BjqhfvpvvDzfIxynOUa+ui0f6P1HcYpVRADkaJ0K";
+    private static final String AWS_ACCESS_KEY = "put your key here";
+    private static final String AWS_SECRET_KEY = "put your key here";
 
     private final ReceiveMessageRequest receiveMessageRequest;
 

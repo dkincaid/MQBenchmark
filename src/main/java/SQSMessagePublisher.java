@@ -11,13 +11,12 @@ import org.slf4j.LoggerFactory;
  * User: davek
  * Date: 12/13/11
  * Time: 1:03 PM
- * To change this template use File | Settings | File Templates.
  */
 public class SQSMessagePublisher implements MessagePublisher {
     private final String uri;
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private static final String AWS_ACCESS_KEY = "AKIAIFLSAH6FOUXXYR7Q";
-    private static final String AWS_SECRET_KEY = "BjqhfvpvvDzfIxynOUa+ui0f6P1HcYpVRADkaJ0K";
+    private static final String AWS_ACCESS_KEY = "<put your key here";
+    private static final String AWS_SECRET_KEY = "<put your key here";
 
     private final AWSCredentials awsCredentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
     private final AmazonSQSClient amazonSQSClient = new AmazonSQSClient(awsCredentials);
